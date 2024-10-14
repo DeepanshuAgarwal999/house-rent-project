@@ -12,6 +12,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import Rental from './pages/Rental'
 import IsAdmin from './components/auth/AdminRoute'
 import RentHouseDetail from './components/RentHouseDetail'
+import CreateHouseForm from './components/CreateHouseForm'
 
 const App = () => {
   return (
@@ -44,6 +45,15 @@ const App = () => {
               <IsAdmin>
                 <CommonLayout>
                   <RentHouseDetail />
+                </CommonLayout>
+              </IsAdmin>
+            }
+          />
+          <Route path='/create-house/'
+            element={
+              <IsAdmin>
+                <CommonLayout>
+                  <CreateHouseForm />
                 </CommonLayout>
               </IsAdmin>
             }

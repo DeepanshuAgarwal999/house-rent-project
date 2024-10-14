@@ -12,7 +12,7 @@ const useGetRentedHouses = () => {
         setLoading(true);
         setError(null);
         try {
-            const { data, status } = await axiosInstance.get("/house");
+            const { data, status } = await axiosInstance.get("/rental");
             console.log(data)
             if (status === 200) {
                 setHouses(data);

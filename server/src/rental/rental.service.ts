@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Rental } from './entities/rental.entity';
 import { User } from 'src/user/entities/user.entity';
 import { House } from 'src/house/entities/house.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { format } from 'date-fns';
 
 @Injectable()
@@ -39,13 +39,17 @@ export class RentalService {
       throw new NotFoundException(`House with ID ${houseId} not found`);
     }
 
-    const existingRentals = await this.rentalRepository.find({
-      where: {
-        startDate: new Date(format(startDate, 'yyyy-MM-dd HH:mm:ss')),
-        endDate: new Date(format(endDate, 'yyyy-MM-dd HH:mm:ss')),
-        house: { id: houseId },
-      },
-    });
+  const existingRentals = await this.rentalRepository.find({
+    where: {
+      house: { id: houseId },
+      startDate: LessThanOrEqual(
+        new Date(format(endDate, 'yyyy-MM-dd HH:mm:ss')),
+      ),
+      endDate: MoreThanOrEqual(
+        new Date(format(startDate, 'yyyy-MM-dd HH:mm:ss')),
+      ),
+    },
+  });
 
     if (existingRentals.length > 0) {
       throw new ConflictException(
@@ -92,7 +96,14 @@ export class RentalService {
     return `This action updates a #${id} rental`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} rental`;
+  async remove(id: number) {
+    const house = await this.houseRepository.findOne({ where: { id } });
+    if (!house) {
+      throw new NotFoundException(`No house found with this id: ${id}`);
+    }
+
+    await this.rentalRepository.delete({ id: id });
+
+    return `Rental with id: ${id} are successfully deleted`;
   }
 }

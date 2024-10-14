@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Delete,
   Injectable,
   InternalServerErrorException,
@@ -10,12 +11,15 @@ import { UpdateHouseDto } from './dto/update-house.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { House } from './entities/house.entity';
 import { Repository } from 'typeorm';
+import { Rental } from 'src/rental/entities/rental.entity';
 
 @Injectable()
 export class HouseService {
   constructor(
     @InjectRepository(House)
     private readonly houseRepository: Repository<House>,
+    @InjectRepository(Rental)
+    private readonly rentalRepository: Repository<Rental>,
   ) {}
 
   async create(createHouseDto: CreateHouseDto) {
@@ -58,6 +62,15 @@ export class HouseService {
     const house = await this.houseRepository.findOne({ where: { id: id } });
     if (!house)
       throw new NotFoundException(`No house found with this id : ${id}`);
+    const rentals = await this.rentalRepository.find({
+      where: { id: id },
+    });
+    if (rentals.length > 0) {
+      throw new ConflictException(
+        `Cannot delete house with id: ${id} because there are existing rentals.`,
+      );
+    }
+
     const deleteHouse = await this.houseRepository.delete(id);
     if (deleteHouse.affected === 0) {
       throw new InternalServerErrorException('Unable to delete house');

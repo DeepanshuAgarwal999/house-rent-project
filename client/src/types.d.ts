@@ -51,3 +51,15 @@ type Rental = {
 type RentalResponse = {
   rental: Rental;
 };
+
+export type HouseType = {
+  id: number; // Unique identifier for the house
+  address: string; // Address of the house
+  img_url?: string; // Optional image URL of the house
+  size: number; // Size of the house in square meters (or other units)
+  location: string; // Location of the house
+  numberOfRooms?: number; // Optional number of rooms in the house
+  price: number; // Price of the house
+  owner?: User; // Owner of the house (optional, can be null)
+  rentals?: Rental[]; // List of rentals associated with the house (optional)
+};

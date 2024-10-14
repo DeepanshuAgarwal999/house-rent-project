@@ -3,6 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { axiosInstance } from '../utils/axios.instance';
 import { Rental, RentalResponse } from '../types';
 import { useAuth } from '../context/AuthProvider';
+import { Button } from './ui/button';
+import { toast } from 'sonner';
+import { AxiosError } from 'axios';
 
 const RentHouseDetail = () => {
     const { id } = useParams();
@@ -23,9 +26,24 @@ const RentHouseDetail = () => {
         })()
     }, [id])
 
+    const handleDelete = async (rentalId: number) => {
+        try {
+            const { status } = await axiosInstance.delete('/rental/' + rentalId)
+
+            if (status === 200) {
+                toast("Rental deleted successfully")
+                navigate('/booked')
+            }
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast(error.response?.data.message)
+            }
+        }
+    }
+
 
     if (!rental) {
-        return <div>No house found</div>;
+        return <div>No Rental found</div>;
     }
     const {
         startDate,
@@ -107,6 +125,7 @@ const RentHouseDetail = () => {
                     </div>
                 </div>
             </div>
+            <Button onClick={() => handleDelete(rental.id)} className='mt-10'>Delete rental contract now</Button>
         </div>
     );
 }

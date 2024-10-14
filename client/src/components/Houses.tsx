@@ -4,7 +4,7 @@ import HouseCard from './HouseCard';
 import Loader from './shared/Loader';
 
 const Houses = () => {
-    const { houses, loading, error } = useGetHouses();
+    const { houses, loading, error, refetch } = useGetHouses();
 
     if (loading) {
         return <Loader />;
@@ -22,7 +22,7 @@ const Houses = () => {
         <div className='container pt-10 flex flex-wrap justify-between gap-10'>
             {
                 houses.map((house) => (
-                    <HouseCard key={house.id} house={house} />
+                    <HouseCard key={house.id} house={house} refetch={refetch} />
                 ))
             }
         </div>

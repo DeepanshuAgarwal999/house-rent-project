@@ -11,7 +11,7 @@ export class Rental {
   @ManyToOne(() => User, (user) => user.rentals)
   user: User;
 
-  @ManyToOne(() => House, (house) => house.rentals)
+  @ManyToOne(() => House, (house) => house.rentals, { onDelete: 'CASCADE' })
   house: House;
 
   @Column()
