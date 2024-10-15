@@ -7,6 +7,7 @@ export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   timeout: 10 * 60 * 1000,
 });
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = cookies.get("user")?.token;
@@ -22,7 +23,6 @@ axiosInstance.interceptors.request.use(
     } else {
       config.headers["Content-Type"] = "application/json";
     }
-
     return config;
   },
   (error) => {
