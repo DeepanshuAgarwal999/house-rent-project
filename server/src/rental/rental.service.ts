@@ -39,17 +39,17 @@ export class RentalService {
       throw new NotFoundException(`House with ID ${houseId} not found`);
     }
 
-  const existingRentals = await this.rentalRepository.find({
-    where: {
-      house: { id: houseId },
-      startDate: LessThanOrEqual(
-        new Date(format(endDate, 'yyyy-MM-dd HH:mm:ss')),
-      ),
-      endDate: MoreThanOrEqual(
-        new Date(format(startDate, 'yyyy-MM-dd HH:mm:ss')),
-      ),
-    },
-  });
+    const existingRentals = await this.rentalRepository.find({
+      where: {
+        house: { id: houseId },
+        startDate: LessThanOrEqual(
+          new Date(format(endDate, 'yyyy-MM-dd HH:mm:ss')),
+        ),
+        endDate: MoreThanOrEqual(
+          new Date(format(startDate, 'yyyy-MM-dd HH:mm:ss')),
+        ),
+      },
+    });
 
     if (existingRentals.length > 0) {
       throw new ConflictException(
@@ -97,9 +97,15 @@ export class RentalService {
   }
 
   async remove(id: number) {
-    const house = await this.houseRepository.findOne({ where: { id } });
-    if (!house) {
-      throw new NotFoundException(`No house found with this id: ${id}`);
+    const rentalHouse = await this.rentalRepository.findOne({
+      where: { id: id },
+      relations: ['user', 'house'],
+    });
+
+    if (!rentalHouse) {
+      throw new NotFoundException(
+        `No rental contract found with this id: ${id}`,
+      );
     }
 
     await this.rentalRepository.delete({ id: id });

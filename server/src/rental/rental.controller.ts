@@ -16,12 +16,13 @@ import { UserRole } from 'src/constants';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 
-@UseGuards(AuthGuard,RolesGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 @Controller('rental')
 export class RentalController {
   constructor(private readonly rentalService: RentalService) {}
 
+  @Roles(UserRole.USER)
   @Post()
   create(@Body() createRentalDto: CreateRentalDto) {
     return this.rentalService.createRental(createRentalDto);
