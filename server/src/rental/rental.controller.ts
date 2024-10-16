@@ -31,8 +31,7 @@ export class RentalController {
   findAll() {
     return this.rentalService.findAll();
   }
-
-  @Roles(UserRole.ADMIN)
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.rentalService.findOne(+id);
