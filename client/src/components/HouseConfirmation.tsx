@@ -1,42 +1,38 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { HouseType } from '../types';
-import { axiosInstance } from '../utils/axios.instance';
 import HouseCard from './HouseCard';
 import HouseForm from './HouseForm';
+import Loader from './shared/Loader';
+import useGetHouses from '../hooks/useGetHouses';
 
 const HouseConfirmation = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
-    const [house, setHouse] = useState<HouseType | null>(null)
-    console.log(id)
-
-    const getHouse = async () => {
-        try {
-            const { data, status } = await axiosInstance.get(`/house/${id}`)
-            if (status === 200) {
-                setHouse(data)
-            }
-        } catch (error) {
-            console.log(error)
-        }
+    if (!id || isNaN(+id)) {
+        return <Navigate to='/' />
     }
-    useEffect(() => {
-        if (!id || isNaN(+id)) {
-            navigate('/')
-        }
-        getHouse()
-    }, [id])
 
-    if (!house) {
-        return <div>No house found for the following request :(</div>
+    const { data, loading, error } = useGetHouses({ id });
+    const house = data as HouseType
+    
+    if (loading) {
+        return <Loader />;
     }
+
+    if (error) {
+        return <h1>Error: {error}</h1>;
+    }
+
+    if (!house || Array.isArray(house)) {
+        return <h1>No houses found!!</h1>;
+    }
+
 
     return (
         <div className='grid md:grid-cols-2 place-content-center justify-items-center pt-10'>
             <HouseCard house={house} showButton={false} />
             <div>
-                <HouseForm house={house}/>
+                <HouseForm house={house} />
             </div>
         </div>
     )

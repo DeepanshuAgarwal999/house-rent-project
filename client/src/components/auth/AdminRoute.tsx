@@ -7,12 +7,12 @@ const IsAdmin = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (!cookies || !cookies.user || cookies.user.role !== 'admin') {
+        if (!cookies || !cookies.user || !cookies.user.isAdmin) {
             navigate('/')
         }
     }, [cookies, cookies.user])
 
-    if (cookies && cookies.user && cookies.user.role === 'admin') {
+    if (cookies && cookies.user && cookies.user.isAdmin) {
         return <>{children}</>
     }
     return null;

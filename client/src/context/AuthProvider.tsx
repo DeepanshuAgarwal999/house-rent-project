@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     removeCookie('user')
     setCookies("user", null)
   }
-  console.log(cookies && cookies.user)
 
   useEffect(() => {
     if (cookies && cookies.user) {

@@ -17,31 +17,34 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
 @Controller('rental')
 export class RentalController {
   constructor(private readonly rentalService: RentalService) {}
 
-  @Roles(UserRole.USER)
   @Post()
   create(@Body() createRentalDto: CreateRentalDto) {
     return this.rentalService.createRental(createRentalDto);
   }
 
+  @Roles(UserRole.ADMIN)
   @Get()
   findAll() {
     return this.rentalService.findAll();
   }
 
+  @Roles(UserRole.ADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.rentalService.findOne(+id);
   }
 
+  @Roles(UserRole.ADMIN)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRentalDto: UpdateRentalDto) {
     return this.rentalService.update(+id, updateRentalDto);
   }
+
+  @Roles(UserRole.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.rentalService.remove(+id);

@@ -92,8 +92,22 @@ export class RentalService {
     };
   }
 
-  update(id: number, updateRentalDto: UpdateRentalDto) {
-    return `This action updates a #${id} rental`;
+  async update(id: number, updateRentalDto: UpdateRentalDto) {
+    const rentalExist = await this.rentalRepository.findOne({
+      where: { id: id },
+    });
+    if (!rentalExist) {
+      throw new NotFoundException(`No rental contact found for this house`);
+    }
+
+    const rentalHouse = await this.rentalRepository.update(id, updateRentalDto);
+
+    if (!rentalHouse) {
+      throw new NotFoundException(
+        `Unable to update contract found with this id: ${id}`,
+      );
+    }
+    return `Rental with id: ${id} are successfully updated`;
   }
 
   async remove(id: number) {

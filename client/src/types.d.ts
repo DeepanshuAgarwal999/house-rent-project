@@ -8,11 +8,11 @@ export type HouseType = {
   numberOfRooms: number;
 };
 
-type Roles = "admin" | "user";
+
 
 export type User = {
   id: number;
-  role: Roles;
+  isAdmin: boolean;
   token: string;
   exp?: number;
   iat?: number;

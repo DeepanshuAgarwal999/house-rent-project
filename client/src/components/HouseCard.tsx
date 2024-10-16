@@ -3,28 +3,17 @@ import { HouseType } from '../types'
 import { Button } from './ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import { axiosInstance } from '../utils/axios.instance';
-import { toast } from 'sonner';
-import { AxiosError } from 'axios';
+import useDeleteHouseOrRental from '../hooks/useDeleteHouseOrRental';
 
 
 const HouseCard = ({ house, showButton = true, refetch = () => { } }: { house: HouseType, showButton?: boolean, refetch?: () => void }) => {
     const { address, id, numberOfRooms, size, img_url, location, price } = house;
     const { user } = useAuth()
     const navigate = useNavigate()
-    const handleDelete = async (id: number) => {
-        try {
-            const { status } = await axiosInstance.delete(`/house/${id}`)
-            if (status === 200) {
-                toast("house deleted successfully")
-                refetch()
-            }
-        } catch (error) {
-            console.log(error)
-            if (error instanceof AxiosError) {
-                toast(error.response?.data.message)
-            }
-        }
+    const { handleDelete } = useDeleteHouseOrRental(`/house/`)
+    const handleDeleteHouse = async (id: number) => {
+        await handleDelete(id)
+        refetch();
     }
     return (
         <article className='border  w-[400px] rounded-xl shadow-xl bg-white p-2 overflow-hidden'>
@@ -46,8 +35,8 @@ const HouseCard = ({ house, showButton = true, refetch = () => { } }: { house: H
                     </Button>
                 }
                 {
-                    user?.role === 'admin' &&
-                    <> <Button onClick={() => handleDelete(id)} className='bg-red-500 text-white rounded-xl h-14 px-4 w-full text-center text-lg mt-4 hover:bg-red-400 active:scale-95'>
+                    user?.isAdmin &&
+                    <> <Button onClick={() => handleDeleteHouse(id)} className='bg-red-500 text-white rounded-xl h-14 px-4 w-full text-center text-lg mt-4 hover:bg-red-400 active:scale-95'>
                         delete
                     </Button>
                     </>

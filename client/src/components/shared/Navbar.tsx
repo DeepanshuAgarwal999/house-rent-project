@@ -23,7 +23,7 @@ const Navbar = () => {
                     </div>
                         :
                         <div className='flex items-center gap-4'>
-                            {user.role === 'admin' && <div className='flex items-center gap-4'>
+                            {user.isAdmin && <div className='flex items-center gap-4'>
                                 <Link to={'/create-house'}><Button>create house</Button></Link>
                                 <Link to={'/booked'}><Button>Booking houses</Button></Link>
                             </div>

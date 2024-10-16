@@ -2,10 +2,12 @@ import React from 'react'
 import useGetHouses from '../hooks/useGetHouses';
 import HouseCard from './HouseCard';
 import Loader from './shared/Loader';
+import { HouseType } from '../types';
 
 const Houses = () => {
-    const { houses, loading, error, refetch } = useGetHouses();
-
+    const { data, loading, error, refetch } = useGetHouses<HouseType[]>();
+    const houses = data as HouseType[]
+    console.log(houses)
     if (loading) {
         return <Loader />;
     }

@@ -11,8 +11,7 @@ import { Input } from "../ui/input"
 import { axiosInstance } from "../../utils/axios.instance"
 import { useCookies } from "react-cookie"
 import { AxiosError } from "axios"
-import { jwtDecode } from "jwt-decode";
-
+import { JwtPayload, jwtDecode } from "jwt-decode";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -30,13 +29,20 @@ export default function LoginForm() {
       password: "123456"
     },
   })
-
+  interface LoginResponse extends JwtPayload {
+    id: number;
+    role: 'admin' | 'user';
+    exp?: number | undefined;
+    iat?: number | undefined;
+  }
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const { data } = await axiosInstance.post('/auth/login', values);
+      console.log(data)
       if (data) {
-        const decoded = jwtDecode(data)
-        setCookie('user', { token: data, ...decoded });
+        const decoded: LoginResponse = jwtDecode(data)
+        const isAdmin = decoded.role === 'admin'
+        setCookie('user', { token: data, ...decoded, isAdmin });
         toast("Login successfully");
         navigate('/');
       }

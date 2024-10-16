@@ -1,33 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { axiosInstance } from "../utils/axios.instance";
-import { HouseType } from "../types";
 
-const useGetHouses = () => {
-  const [houses, setHouses] = useState<HouseType[]>([]);
+const useGetData = <T>({ id }: { id?: string } = {}) => {
+  const [data, setData] = useState<T[] | T | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getHouses = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const { data, status } = await axiosInstance.get("/house");
-      console.log(data)
-      if (status === 200) {
-        setHouses(data);
+      const response = await axiosInstance.get(id ? `/house/${id}` : "/house");
+      if (response.status === 200) {
+        setData(response.data);
       }
     } catch (error: any) {
       setError(error?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
-    getHouses();
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
-  return { houses, loading, error, refetch: getHouses };
+  return { data, loading, error, refetch: fetchData };
 };
 
-export default useGetHouses;
+export default useGetData;

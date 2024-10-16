@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { axiosInstance } from '../utils/axios.instance';
 import { Rental, RentalResponse } from '../types';
-import { useAuth } from '../context/AuthProvider';
 import { Button } from './ui/button';
-import { toast } from 'sonner';
-import { AxiosError } from 'axios';
+import useDeleteHouseOrRental from '../hooks/useDeleteHouseOrRental';
 
 const RentHouseDetail = () => {
     const { id } = useParams();
@@ -13,7 +11,7 @@ const RentHouseDetail = () => {
     const [rental, setRental] = useState<Rental | null>(null)
 
     useEffect(() => {
-        if (!id) {
+        if (!id || isNaN(+id)) {
             navigate('/')
         }
         (async () => {
@@ -26,20 +24,7 @@ const RentHouseDetail = () => {
         })()
     }, [id])
 
-    const handleDelete = async (rentalId: number) => {
-        try {
-            const { status } = await axiosInstance.delete('/rental/' + rentalId)
-
-            if (status === 200) {
-                toast("Rental deleted successfully")
-                navigate('/booked')
-            }
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast(error.response?.data.message)
-            }
-        }
-    }
+    const { handleDelete } = useDeleteHouseOrRental(`/rental/`)
 
 
     if (!rental) {
